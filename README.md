@@ -56,7 +56,20 @@ Use these when you need the exact command path rather than relying on trainer me
 - The helper refuses to overwrite an existing `work/<session-id>/`.
 - Do not edit files in `session-starters/`.
 
-The initial source files kept at repository root are retained for compatibility. For classroom progression, the canonical workflow is always `tools/start-session`.
+## Where the exercise source lives
+
+There is intentionally **no exercise `src/`, `include/`, `tests/`, `data/`, `examples/`, or root exercise `Makefile`** in the repository checkout.
+
+The exercise source appears only after you start a session:
+
+```sh
+./tools/start-session day1-session1
+cd work/day1-session1
+```
+
+From that point onward, open and edit files only inside that session's `work/<session-id>/` directory. If a guide says `src/event_parser.c`, it means `work/<session-id>/src/event_parser.c` after you have entered the session workspace.
+
+This avoids mixing a stale root copy with the governed cumulative session starter.
 
 ## Existing participants
 
