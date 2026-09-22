@@ -38,6 +38,13 @@ make course-status
 
 The same workflow continues through `day3-session4`. See `SESSION_STARTERS.md` for the complete session map.
 
+## Participant execution guides
+
+Use these when you need the exact command path rather than relying on trainer memory:
+
+- **Day 1:** [`DAY1_PARTICIPANT_GUIDE.md`](DAY1_PARTICIPANT_GUIDE.md) — exact GDB and Valgrind/Memcheck workflows, including the prepared `gateway_broken` crash.
+- **Day 2:** [`DAY2_PARTICIPANT_GUIDE.md`](DAY2_PARTICIPANT_GUIDE.md) — step-by-step session execution path.
+
 ## How the session workspaces behave
 
 - Each later session starter is a **cumulative verified entry state**: prerequisite course functionality is already completed up to that point.
@@ -71,4 +78,4 @@ day2-session1  day2-session2  day2-session3  day2-session4
 day3-session1  day3-session2  day3-session3  day3-session4
 ```
 
-For the exact archive names and session topics, see `SESSION_STARTERS.md`. For Day 2's step-by-step participant execution path, use [`DAY2_PARTICIPANT_GUIDE.md`](DAY2_PARTICIPANT_GUIDE.md).
+For the exact archive names and session topics, see `SESSION_STARTERS.md`.

@@ -29,6 +29,10 @@ Do not edit or unpack these archives manually during normal course delivery. Use
 
 Every later archive contains the completed prerequisite course state plus only the intended new session problem state. These are participant-safe starting checkpoints, not solution packages or restore controls.
 
+## Day 1 execution guide
+
+For the exact Day 1 GDB and Valgrind/Memcheck workflows—including how to build and diagnose the prepared `gateway_broken` binary—see [`DAY1_PARTICIPANT_GUIDE.md`](DAY1_PARTICIPANT_GUIDE.md).
+
 ## Day 2 execution guide
 
 For the participant-facing Day 2 sequence—first command, expected starter evidence, file/TODO boundary, verification commands and done condition—see [`DAY2_PARTICIPANT_GUIDE.md`](DAY2_PARTICIPANT_GUIDE.md).
