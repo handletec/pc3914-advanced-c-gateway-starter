@@ -28,3 +28,7 @@ Do not edit or unpack these archives manually during normal course delivery. Use
 `session-starters/SHA256SUMS` records the governed SHA-256 for all 12 archives. `tools/start-session` refuses extraction if the selected archive does not match its recorded digest.
 
 Every later archive contains the completed prerequisite course state plus only the intended new session problem state. These are participant-safe starting checkpoints, not solution packages or restore controls.
+
+## Day 2 execution guide
+
+For the participant-facing Day 2 sequence—first command, expected starter evidence, file/TODO boundary, verification commands and done condition—see [`DAY2_PARTICIPANT_GUIDE.md`](DAY2_PARTICIPANT_GUIDE.md).
