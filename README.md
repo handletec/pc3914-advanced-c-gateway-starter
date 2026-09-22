@@ -71,4 +71,4 @@ day2-session1  day2-session2  day2-session3  day2-session4
 day3-session1  day3-session2  day3-session3  day3-session4
 ```
 
-For the exact archive names and session topics, see `SESSION_STARTERS.md`. For Day 2's step-by-step participant execution path, use [`DAY2_PARTICIPANT_GUIDE.md`](DAY2_PARTICIPANT_GUIDE.md).
+For the exact archive names and session topics, see `SESSION_STARTERS.md`. For step-by-step participant execution, use [`DAY2_PARTICIPANT_GUIDE.md`](DAY2_PARTICIPANT_GUIDE.md) and [`DAY3_PARTICIPANT_GUIDE.md`](DAY3_PARTICIPANT_GUIDE.md).
