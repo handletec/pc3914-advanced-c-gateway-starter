@@ -1,0 +1,85 @@
+#!/bin/sh
+set -eu
+
+usage() {
+  echo "Usage: $0 day1-session1|day1-session2|day1-session3|day1-session4" >&2
+  exit 2
+}
+
+[ "$#" -eq 1 ] || usage
+session="$1"
+
+case "$session" in
+  day1-session1) archive="PC3914_Day1_Session1_Participant_Starter_v2.17.tar.gz" ;;
+  day1-session2) archive="PC3914_Day1_Session2_Participant_Starter_v2.17.tar.gz" ;;
+  day1-session3) archive="PC3914_Day1_Session3_Participant_Starter_v2.17.tar.gz" ;;
+  day1-session4) archive="PC3914_Day1_Session4_Participant_Starter_v2.17.tar.gz" ;;
+  *) usage ;;
+esac
+
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+root=$(CDPATH= cd -- "$script_dir/.." && pwd)
+pack="$root/session-starters/PC3914_Day1_Only_Participant_Pack_v2.17.zip"
+work_root="$root/work"
+dest="$work_root/$session"
+
+[ -f "$pack" ] || { echo "ERROR: Day 1 starter pack is missing." >&2; exit 1; }
+command -v unzip >/dev/null 2>&1 || { echo "ERROR: unzip is required to start a session." >&2; exit 1; }
+[ ! -e "$dest" ] || { echo "ERROR: $dest already exists. Existing work was not changed." >&2; exit 1; }
+
+expected=$(unzip -p "$pack" session-starters/SHA256SUMS | awk -v f="$archive" '$2 == f {print $1}')
+[ -n "$expected" ] || { echo "ERROR: no checksum recorded for $archive" >&2; exit 1; }
+
+mkdir -p "$work_root"
+tmp=$(mktemp -d "$work_root/.$session.tmp.XXXXXX")
+cleanup() { rm -rf "$tmp"; }
+trap cleanup EXIT HUP INT TERM
+
+archive_path="$tmp/$archive"
+unzip -p "$pack" "session-starters/$archive" > "$archive_path"
+
+if command -v sha256sum >/dev/null 2>&1; then
+  actual=$(sha256sum "$archive_path" | awk '{print $1}')
+elif command -v shasum >/dev/null 2>&1; then
+  actual=$(shasum -a 256 "$archive_path" | awk '{print $1}')
+else
+  echo "ERROR: need sha256sum or shasum to verify the starter archive." >&2
+  exit 1
+fi
+
+[ "$actual" = "$expected" ] || {
+  echo "ERROR: checksum mismatch for $archive" >&2
+  echo "expected: $expected" >&2
+  echo "actual:   $actual" >&2
+  exit 1
+}
+
+mkdir "$tmp/extract"
+tar -xzf "$archive_path" -C "$tmp/extract"
+
+makefiles=$(find "$tmp/extract" -type f -name Makefile -print)
+count=$(printf '%s\n' "$makefiles" | awk 'NF {n++} END {print n+0}')
+[ "$count" -eq 1 ] || {
+  echo "ERROR: expected exactly one project Makefile in starter archive; found $count." >&2
+  exit 1
+}
+
+makefile=$(printf '%s\n' "$makefiles" | awk 'NF {print; exit}')
+project_root=$(dirname "$makefile")
+
+mkdir "$dest"
+(
+  cd "$project_root"
+  tar -cf - .
+) | (
+  cd "$dest"
+  tar -xf -
+)
+
+trap - EXIT HUP INT TERM
+rm -rf "$tmp"
+
+echo "READY: $session"
+echo "Starter verified: $expected"
+echo "Work directory: $dest"
+echo "Next: cd work/$session && make course-status"
