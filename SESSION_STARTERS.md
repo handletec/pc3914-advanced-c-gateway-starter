@@ -36,3 +36,7 @@ For the exact Day 1 GDB and Valgrind/Memcheck workflows—including how to build
 ## Day 2 execution guide
 
 For the participant-facing Day 2 sequence—first command, expected starter evidence, file/TODO boundary, verification commands and done condition—see [`DAY2_PARTICIPANT_GUIDE.md`](DAY2_PARTICIPANT_GUIDE.md).
+
+## Day 3 execution guide
+
+For the participant-facing Day 3 sequence—first command, expected starter evidence, file/TODO boundary, verification commands and done condition—see [`DAY3_PARTICIPANT_GUIDE.md`](DAY3_PARTICIPANT_GUIDE.md).

@@ -44,6 +44,7 @@ Use these when you need the exact command path rather than relying on trainer me
 
 - **Day 1:** [`DAY1_PARTICIPANT_GUIDE.md`](DAY1_PARTICIPANT_GUIDE.md) — exact GDB and Valgrind/Memcheck workflows, including the prepared `gateway_broken` crash.
 - **Day 2:** [`DAY2_PARTICIPANT_GUIDE.md`](DAY2_PARTICIPANT_GUIDE.md) — step-by-step session execution path.
+- **Day 3:** [`DAY3_PARTICIPANT_GUIDE.md`](DAY3_PARTICIPANT_GUIDE.md) — files/processes, threads, TCP/Reactor, Observer/persistence, and final integration.
 
 ## How the session workspaces behave
 
