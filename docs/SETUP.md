@@ -71,3 +71,15 @@ Required final line:
 ```text
 PC3914 READINESS: PASS
 ```
+
+## Classroom session workspaces
+
+After the repository is cloned and the readiness check passes, start the required course session from the repository root:
+
+```sh
+./tools/start-session day1-session1
+cd work/day1-session1
+make course-status
+```
+
+Use a new `work/<session-id>/` directory for each session. Do not edit `session-starters/`; the helper verifies the governed archive before extraction and refuses to overwrite existing work.

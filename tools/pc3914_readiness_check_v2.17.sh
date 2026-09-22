@@ -21,7 +21,7 @@ else
   say_fail "Linux environment required for governed lab evidence (detected: $os)"
 fi
 
-for c in gcc make gdb valgrind strace ar nm ldd tar gzip grep sed awk diff sort tail timeout sha256sum; do
+for c in gcc make gdb valgrind strace ar nm ldd tar gzip grep sed awk diff sort tail timeout sha256sum find mktemp mv; do
   if command -v "$c" >/dev/null 2>&1; then
     say_pass "$c available"
   else

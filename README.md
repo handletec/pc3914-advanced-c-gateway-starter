@@ -1,21 +1,24 @@
-# PC3914 Advanced C Gateway — Day 1
+# PC3914 Advanced C Gateway
 
 Participant repository for **PC3914 — Advanced C Programming: From Basic C to Systems-Ready**, material version **v2.17**.
 
-For the current delivery, this repository publishes **Day 1 only**. Day 2 and Day 3 will be added separately.
+This repository is the classroom entry point for all **12 sessions across Days 1–3**. Clone once, then use the session helper to create a separate verified workspace for the session you are starting.
 
-## Existing participants
+## First-time setup
 
-From your existing clone:
+Use the governed Ubuntu/Linux environment described in `docs/SETUP.md`, then run:
 
 ```sh
-git status
-git pull
+./tools/pc3914_readiness_check_v2.17.sh
 ```
 
-If `git pull` reports that your local tracked changes would be overwritten, do **not** force, reset, stash, or merge during class. Keep that folder as your old work and make a fresh clone instead.
+Required final line:
 
-## Start Day 1 Session 1
+```text
+PC3914 READINESS: PASS
+```
+
+## Start a session
 
 From the repository root:
 
@@ -25,38 +28,47 @@ cd work/day1-session1
 make course-status
 ```
 
-Do all exercise work inside `work/day1-session1/`.
-
-## Later Day 1 sessions
-
-Return to the repository root and start the required cumulative snapshot:
+For the next session, return to the repository root and run the helper with the next session ID:
 
 ```sh
 ./tools/start-session day1-session2
-./tools/start-session day1-session3
-./tools/start-session day1-session4
-```
-
-Then enter the corresponding directory:
-
-```sh
-cd work/day1-sessionN
+cd work/day1-session2
 make course-status
 ```
 
-Each later session snapshot already contains the completed prerequisite state expected at that point in the course. Your earlier `work/` folders are left untouched.
+The same workflow continues through `day3-session4`. See `SESSION_STARTERS.md` for the complete session map.
 
-## Important
+## How the session workspaces behave
 
-- Work only inside `work/<session-id>/`.
-- Do not edit `session-starters/`.
-- `start-session` verifies the governed SHA-256 of the selected starter before extracting it.
-- `start-session` refuses to overwrite an existing work directory.
-- The original initial starter files remain at repository root for compatibility; use `tools/start-session` for classroom progression.
+- Each later session starter is a **cumulative verified entry state**: prerequisite course functionality is already completed up to that point.
+- Your earlier `work/<session-id>/` folders are left untouched.
+- Work from an earlier folder is not automatically merged into a later starter; each session is a separate course checkpoint.
+- `tools/start-session` verifies the governed SHA-256 before extracting anything.
+- The helper detects the actual project root in the archive instead of assuming every day has the same archive layout.
+- The helper refuses to overwrite an existing `work/<session-id>/`.
+- Do not edit files in `session-starters/`.
 
-## Day 1 session map
+The initial source files kept at repository root are retained for compatibility. For classroom progression, the canonical workflow is always `tools/start-session`.
 
-- `day1-session1` — bounded parsing and parser contracts
-- `day1-session2` — retained data, ownership and Event Store
-- `day1-session3` — arena allocation, snapshot lifetime and integration evidence
-- `day1-session4` — regression challenges and cumulative Day 1 evidence
+## Existing participants
+
+Before updating an existing clone:
+
+```sh
+git status
+git pull
+```
+
+If `git pull` reports that tracked local changes would be overwritten, do **not** force, reset, stash, or merge during class. Keep that folder as your previous work and make a fresh clone instead.
+
+After updating, use `tools/start-session` and do new exercise work only inside `work/<session-id>/`.
+
+## Session IDs
+
+```text
+day1-session1  day1-session2  day1-session3  day1-session4
+day2-session1  day2-session2  day2-session3  day2-session4
+day3-session1  day3-session2  day3-session3  day3-session4
+```
+
+For the exact archive names and session topics, see `SESSION_STARTERS.md`.

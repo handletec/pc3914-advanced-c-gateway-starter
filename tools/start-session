@@ -1,81 +1,87 @@
 #!/bin/sh
 set -eu
 
+valid_sessions='day1-session1 day1-session2 day1-session3 day1-session4 day2-session1 day2-session2 day2-session3 day2-session4 day3-session1 day3-session2 day3-session3 day3-session4'
+
 usage() {
-  echo "Usage: $0 day1-session1|day1-session2|day1-session3|day1-session4" >&2
-  exit 2
+    echo "Usage: $0 <session-id>" >&2
+    echo "Valid session IDs:" >&2
+    for id in $valid_sessions; do echo "  $id" >&2; done
+    exit 2
 }
 
 [ "$#" -eq 1 ] || usage
-session="$1"
+session=$1
 
 case "$session" in
-  day1-session1) archive="PC3914_Day1_Session1_Participant_Starter_v2.17.tar.gz" ;;
-  day1-session2) archive="PC3914_Day1_Session2_Participant_Starter_v2.17.tar.gz" ;;
-  day1-session3) archive="PC3914_Day1_Session3_Participant_Starter_v2.17.tar.gz" ;;
-  day1-session4) archive="PC3914_Day1_Session4_Participant_Starter_v2.17.tar.gz" ;;
-  *) usage ;;
+    day1-session1) archive=PC3914_Day1_Session1_Participant_Starter_v2.17.tar.gz ;;
+    day1-session2) archive=PC3914_Day1_Session2_Participant_Starter_v2.17.tar.gz ;;
+    day1-session3) archive=PC3914_Day1_Session3_Participant_Starter_v2.17.tar.gz ;;
+    day1-session4) archive=PC3914_Day1_Session4_Participant_Starter_v2.17.tar.gz ;;
+    day2-session1) archive=PC3914_Day2_Session1_Participant_Starter_v2.17.tar.gz ;;
+    day2-session2) archive=PC3914_Day2_Session2_Participant_Starter_v2.17.tar.gz ;;
+    day2-session3) archive=PC3914_Day2_Session3_Participant_Starter_v2.17.tar.gz ;;
+    day2-session4) archive=PC3914_Day2_Session4_Participant_Starter_v2.17.tar.gz ;;
+    day3-session1) archive=PC3914_Day3_Session1_Participant_Starter_v2.17.tar.gz ;;
+    day3-session2) archive=PC3914_Day3_Session2_Participant_Starter_v2.17.tar.gz ;;
+    day3-session3) archive=PC3914_Day3_Session3_Participant_Starter_v2.17.tar.gz ;;
+    day3-session4) archive=PC3914_Day3_Session4_Participant_Starter_v2.17.tar.gz ;;
+    *) usage ;;
 esac
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 root=$(CDPATH= cd -- "$script_dir/.." && pwd)
-pack="$root/session-starters/PC3914_Day1_Only_Participant_Pack_v2.17.zip"
+starters="$root/session-starters"
+manifest="$starters/SHA256SUMS"
+archive_path="$starters/$archive"
 work_root="$root/work"
 dest="$work_root/$session"
 
-[ -f "$pack" ] || { echo "ERROR: Day 1 starter pack is missing." >&2; exit 1; }
-command -v unzip >/dev/null 2>&1 || { echo "ERROR: unzip is required to start a session." >&2; exit 1; }
+[ -f "$manifest" ] || { echo "ERROR: checksum manifest is missing: $manifest" >&2; exit 1; }
+[ -f "$archive_path" ] || { echo "ERROR: starter archive is missing: $archive" >&2; exit 1; }
+command -v tar >/dev/null 2>&1 || { echo "ERROR: tar is required." >&2; exit 1; }
+command -v find >/dev/null 2>&1 || { echo "ERROR: find is required." >&2; exit 1; }
 [ ! -e "$dest" ] || { echo "ERROR: $dest already exists. Existing work was not changed." >&2; exit 1; }
 
-expected=$(unzip -p "$pack" session-starters/SHA256SUMS | awk -v f="$archive" '$2 == f {print $1}')
-[ -n "$expected" ] || { echo "ERROR: no checksum recorded for $archive" >&2; exit 1; }
+expected=$(awk -v f="$archive" '$2 == f {print $1}' "$manifest")
+case "$expected" in
+    '') echo "ERROR: no checksum recorded for $archive" >&2; exit 1 ;;
+    *' '*) echo "ERROR: multiple checksum records found for $archive" >&2; exit 1 ;;
+esac
+
+if command -v sha256sum >/dev/null 2>&1; then
+    actual=$(sha256sum "$archive_path" | awk '{print $1}')
+elif command -v shasum >/dev/null 2>&1; then
+    actual=$(shasum -a 256 "$archive_path" | awk '{print $1}')
+else
+    echo "ERROR: need sha256sum or shasum to verify the starter archive." >&2
+    exit 1
+fi
+
+[ "$actual" = "$expected" ] || {
+    echo "ERROR: checksum mismatch for $archive" >&2
+    echo "expected: $expected" >&2
+    echo "actual:   $actual" >&2
+    exit 1
+}
 
 mkdir -p "$work_root"
 tmp=$(mktemp -d "$work_root/.$session.tmp.XXXXXX")
 cleanup() { rm -rf "$tmp"; }
 trap cleanup EXIT HUP INT TERM
-
-archive_path="$tmp/$archive"
-unzip -p "$pack" "session-starters/$archive" > "$archive_path"
-
-if command -v sha256sum >/dev/null 2>&1; then
-  actual=$(sha256sum "$archive_path" | awk '{print $1}')
-elif command -v shasum >/dev/null 2>&1; then
-  actual=$(shasum -a 256 "$archive_path" | awk '{print $1}')
-else
-  echo "ERROR: need sha256sum or shasum to verify the starter archive." >&2
-  exit 1
-fi
-
-[ "$actual" = "$expected" ] || {
-  echo "ERROR: checksum mismatch for $archive" >&2
-  echo "expected: $expected" >&2
-  echo "actual:   $actual" >&2
-  exit 1
-}
-
 mkdir "$tmp/extract"
 tar -xzf "$archive_path" -C "$tmp/extract"
 
 makefiles=$(find "$tmp/extract" -type f -name Makefile -print)
 count=$(printf '%s\n' "$makefiles" | awk 'NF {n++} END {print n+0}')
 [ "$count" -eq 1 ] || {
-  echo "ERROR: expected exactly one project Makefile in starter archive; found $count." >&2
-  exit 1
+    echo "ERROR: expected exactly one project Makefile in $archive; found $count." >&2
+    exit 1
 }
-
 makefile=$(printf '%s\n' "$makefiles" | awk 'NF {print; exit}')
 project_root=$(dirname "$makefile")
 
-mkdir "$dest"
-(
-  cd "$project_root"
-  tar -cf - .
-) | (
-  cd "$dest"
-  tar -xf -
-)
-
+mv "$project_root" "$dest"
 trap - EXIT HUP INT TERM
 rm -rf "$tmp"
 
